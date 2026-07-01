@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Script from "next/script"; // Impor Script di sini
 
 declare global {
     interface Window {
@@ -11,42 +12,46 @@ declare global {
 
 export default function SalesforceProvider({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const [sdkReady, setSdkReady] = useState(false);
 
-    useEffect(() => {
-        const initializeSDK = () => {
-            if (window.SalesforceInteractions) {
-                const sdk = window.SalesforceInteractions;
+    const initializeSDK = () => {
+        if (typeof window !== "undefined" && window.SalesforceInteractions) {
+            const sdk = window.SalesforceInteractions;
 
-                // Cek apakah sudah pernah diinit agar tidak double init
-                if (sdk.isInitialized?.()) return;
+            // Cegah inisialisasi ganda
+            if (sdk.isInitialized?.()) return;
 
-                sdk.init({
-                    cookieDomain: window.location.hostname,
-                    consents: [],
-                }).then(() => {
-                    sdk.initSitemap({
-                        global: {},
-                        pageTypeDefault: { name: "default" },
-                        pageTypes: []
-                    });
-                    console.log("Salesforce SDK Berhasil Diinisialisasi");
+            sdk.init({
+                cookieDomain: window.location.hostname,
+                consents: [],
+            }).then(() => {
+                sdk.initSitemap({
+                    global: {},
+                    pageTypeDefault: { name: "default" },
+                    pageTypes: []
                 });
-            }
-        };
+                console.log("Salesforce SDK Berhasil Diinisialisasi");
+                setSdkReady(true);
+            });
+        }
+    };
 
-        // Jalankan langsung jika script sudah instan tersedia
-        initializeSDK();
-
-        // Dengarkan event jika script baru selesai dimuat pasca-mount
-        window.addEventListener("salesforce-sdk-ready", initializeSDK);
-        return () => window.removeEventListener("salesforce-sdk-ready", initializeSDK);
-    }, []);
-
+    // Jalankan reinit saat rute berubah, tapi pastikan SDK sudah ready dulu
     useEffect(() => {
-        if (window.SalesforceInteractions) {
+        if (sdkReady && window.SalesforceInteractions) {
             window.SalesforceInteractions.reinit();
         }
-    }, [pathname]);
+    }, [pathname, sdkReady]);
 
-    return <>{children}</>;
+    return (
+        <>
+            {/* Script aman ditaruh di sini karena ini Client Component */}
+            <Script
+                src="https://cdn.c360a.salesforce.com/beacon/c360a/0d0c0943-d1e4-4472-ae82-4a1b82e85a65/scripts/c360a.min.js"
+                strategy="afterInteractive"
+                onLoad={initializeSDK} // Fungsi onLoad aman dieksekusi di sini
+            />
+            {children}
+        </>
+    );
 }
