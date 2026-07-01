@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script"; // Impor Script Next.js
+
 import "./globals.css";
+import SalesforceProvider from "./components/SalesforceProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,18 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <Script
+          src="https://cdn.c360a.salesforce.com/beacon/c360a/0d0c0943-d1e4-4472-ae82-4a1b82e85a65/scripts/c360a.min.js"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
+        {/* Bungkus children agar Salesforce SDK aktif di seluruh halaman */}
+        <SalesforceProvider>
+          {children}
+        </SalesforceProvider>
+      </body>
     </html>
   );
 }
