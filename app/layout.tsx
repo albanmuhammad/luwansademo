@@ -30,14 +30,18 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
+      <body className="min-h-full flex flex-col">
+        {/* Pindahkan Script ke sini dengan strategy afterInteractive */}
         <Script
           src="https://cdn.c360a.salesforce.com/beacon/c360a/0d0c0943-d1e4-4472-ae82-4a1b82e85a65/scripts/c360a.min.js"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
+          onLoad={() => {
+            // Memicu inisialisasi kustom jika diperlukan langsung saat load
+            if (window.SalesforceInteractions) {
+              window.dispatchEvent(new Event("salesforce-sdk-ready"));
+            }
+          }}
         />
-      </head>
-      <body className="min-h-full flex flex-col">
-        {/* Bungkus children agar Salesforce SDK aktif di seluruh halaman */}
         <SalesforceProvider>
           {children}
         </SalesforceProvider>
