@@ -1,27 +1,6 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
 import Script from "next/script";
 
-declare global {
-    interface Window {
-        SalesforceInteractions?: any;
-    }
-}
-
 export default function SalesforceProvider({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    const isFirstLoad = useRef(true);
-
-    useEffect(() => {
-        if (isFirstLoad.current) {
-            isFirstLoad.current = false;
-            return; // page view pertama sudah ditangani otomatis oleh sitemap saat load
-        }
-        window.SalesforceInteractions?.reinit?.();
-    }, [pathname]);
-
     return (
         <>
             <Script
