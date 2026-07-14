@@ -29,7 +29,7 @@ export default function SalesforceProvider({ children }: { children: React.React
                                 {
                                     provider: "luwansa-website",
                                     purpose: "Personalization",
-                                    status: "OptIn"
+                                    status: "Opt In"
                                 }
                             ]
                         });
