@@ -32,6 +32,9 @@ export default function SalesforceProvider({ children }: { children: React.React
                                     status: "Opt In"
                                 }
                             ]
+                        }).then(() => {
+                            // set the log level during sitemap development to see potential problems
+                            window.SalesforceInteractions.log.level = "debug"
                         });
                     }
                 }}
