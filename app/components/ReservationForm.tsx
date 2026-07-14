@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Room } from "../data/rooms";
 import { roomTypeMeta } from "../data/rooms";
-import { setLocalSegment } from "../../lib/salesforce/segment";
 
 interface FormState {
   firstName: string;
@@ -39,7 +38,7 @@ export default function ReservationForm({ room }: { room: Room }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalSegment(meta.category);
+    // setLocalSegment(meta.category);
     setSubmitted(true);
   };
 
