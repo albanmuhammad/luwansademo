@@ -19,7 +19,6 @@ export default function SalesforceProvider({ children }: { children: React.React
         if (typeof window === "undefined" || !window.SalesforceInteractions) return;
         const sdk = window.SalesforceInteractions;
 
-        // Cegah inisialisasi ganda (misal saat hot-reload di dev)
         if (sdk.isInitialized?.()) {
             setSdkReady(true);
             return;
@@ -31,49 +30,15 @@ export default function SalesforceProvider({ children }: { children: React.React
                 consents: [],
             })
             .then(() => {
-                sdk.initSitemap({
-                    global: {},
-                    pageTypeDefault: { name: "default" },
-                    pageTypes: [
-                        // Definisikan pageType per section supaya Salesforce bisa membedakan
-                        // Home / Rooms / Meetings / Reservation di dashboard Personalization.
-                        {
-                            name: "home",
-                            isMatch: () => window.location.pathname === "/",
-                        },
-                        {
-                            name: "rooms_list",
-                            isMatch: () => window.location.pathname === "/rooms",
-                        },
-                        {
-                            name: "room_detail",
-                            isMatch: () => window.location.pathname.startsWith("/rooms/"),
-                        },
-                        {
-                            name: "meetings_list",
-                            isMatch: () => window.location.pathname === "/meetings",
-                        },
-                        {
-                            name: "meeting_detail",
-                            isMatch: () => window.location.pathname.startsWith("/meetings/"),
-                        },
-                        {
-                            name: "reservation",
-                            isMatch: () => window.location.pathname.startsWith("/reservation/"),
-                        },
-                    ],
-                });
                 console.log("Salesforce SDK berhasil diinisialisasi");
                 setSdkReady(true);
             });
     };
 
-    // Next.js App Router adalah SPA setelah load pertama, jadi setiap ganti route
-    // (klik tab Home/Kamar/Meeting, dst) harus memberi tahu SDK ada "page view" baru.
     useEffect(() => {
         if (isFirstLoad.current) {
             isFirstLoad.current = false;
-            return; // page view pertama sudah ditangani oleh init() + initSitemap() di atas
+            return;
         }
         if (sdkReady && window.SalesforceInteractions) {
             window.SalesforceInteractions.reinit();
