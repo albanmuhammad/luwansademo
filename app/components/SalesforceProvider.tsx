@@ -16,27 +16,25 @@ export default function SalesforceProvider({ children }: { children: React.React
 
     return (
         <>
-            {/* 1. Daftarkan konfigurasi INIT ke antrean global sebelum script utama di-load */}
-            <Script id="sf-interactions-queue" strategy="beforeInteractive">
-                {`
-          window.salesforce_interactions = window.salesforce_interactions || [];
-          window.salesforce_interactions.push({
-            cookieDomain: window.location.hostname,
-            consents: [
-              {
-                provider: "luwansa-website",
-                purpose: "Personalization",
-                status: "OptIn"
-              }
-            ]
-          });
-        `}
-            </Script>
-
-            {/* 2. Muat CDN Utama Salesforce */}
+            {/* Langsung muat CDN Utama Salesforce */}
             <Script
                 src="https://cdn.c360a.salesforce.com/beacon/c360a/0d0c0943-d1e4-4472-ae82-4a1b82e85a65/scripts/c360a.min.js"
                 strategy="afterInteractive"
+                onLoad={() => {
+                    // KODE INI AMAN: Hanya berjalan saat c360a.min.js sudah 100% ter-load
+                    if (window.SalesforceInteractions) {
+                        window.SalesforceInteractions.init({
+                            cookieDomain: window.location.hostname,
+                            consents: [
+                                {
+                                    provider: "luwansa-website",
+                                    purpose: "Personalization",
+                                    status: "OptIn"
+                                }
+                            ]
+                        });
+                    }
+                }}
             />
             {children}
         </>
