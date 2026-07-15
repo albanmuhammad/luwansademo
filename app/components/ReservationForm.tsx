@@ -38,8 +38,12 @@ export default function ReservationForm({ room }: { room: Room }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // setLocalSegment(meta.category);
-    setSubmitted(true);
+    // Tunda unmount form sedikit supaya listener sitemap (yang mendengarkan
+    // native "submit" event di form ini) sempat selesai memproses & mengirim
+    // event ke Salesforce sebelum form-nya dicabut dari DOM oleh React.
+    setTimeout(() => {
+      setSubmitted(true);
+    }, 150);
   };
 
   if (submitted) {

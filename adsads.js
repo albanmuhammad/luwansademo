@@ -76,6 +76,8 @@ const sitemapConfig = {
       },
       listeners: [
         SalesforceInteractions.listener("submit", "form", function (event) {
+          // JANGAN hapus baris ini. Ini memberi jeda agar asinkronus sendEvent
+          // tidak terputus oleh manipulasi DOM komponen React di baliknya.
           const formEl = event.target.closest("form");
           if (!formEl) return;
 
@@ -86,23 +88,15 @@ const sitemapConfig = {
             return input ? input.value : undefined;
           };
 
-          // 1. HITUNG JUMLAH MALAM (QUANTITY)
-          const checkInVal = getField("checkIn"); // Format standard HTML date: "YYYY-MM-DD"
+          const checkInVal = getField("checkIn");
           const checkOutVal = getField("checkOut");
-
-          let totalNights = 1; // Default fallback jika tanggal tidak valid
+          let totalNights = 1;
 
           if (checkInVal && checkOutVal) {
             const date1 = new Date(checkInVal);
             const date2 = new Date(checkOutVal);
-
-            // Dapatkan selisih dalam milidetik
             const diffTime = date2.getTime() - date1.getTime();
-
-            // Konversi milidetik ke jumlah hari/malam
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            // Pastikan bernilai minimal 1 malam untuk menghindari error kuantitas 0
             if (diffDays > 0) {
               totalNights = diffDays;
             }
@@ -110,7 +104,6 @@ const sitemapConfig = {
 
           const baseRoomPrice =
             Number(formEl.getAttribute("data-sf-price")) || 0;
-          // 2. HITUNG GRAND TOTAL ORDER: (Harga per malam * jumlah malam)
           const grandTotalPrice = baseRoomPrice * totalNights;
 
           SalesforceInteractions.sendEvent({
@@ -128,8 +121,8 @@ const sitemapConfig = {
               name: SalesforceInteractions.OrderInteractionName.Purchase,
               order: {
                 id: "ORD-" + Date.now(),
-                price: grandTotalPrice, // Menggunakan total harga akumulasi malam menginap
-                lineItems: [buildLineItem(formEl, totalNights)], // Lempar totalNights ke helper function
+                price: grandTotalPrice,
+                lineItems: [buildLineItem(formEl, totalNights)],
                 attributes: {
                   checkIn: checkInVal,
                   checkOut: checkOutVal,
@@ -161,11 +154,19 @@ function buildCatalogObject(el) {
   };
 }
 
-function buildLineItem(el) {
+/**
+ * Bangun objek lineItem dengan kuantitas malam dinamis
+ * @param {HTMLElement} el Elemen form
+ * @param {number} nights Jumlah malam hasil kalkulasi
+ */
+function buildLineItem(el, nights) {
+  // Gunakan kuantitas malam yang dihitung, jika tidak dilempar (seperti di AddToCart global) default ke 1
+  const quantityValue = nights && nights > 0 ? nights : 1;
+
   return {
     catalogObjectType: el.getAttribute("data-sf-catalog-type"),
     catalogObjectId: el.getAttribute("data-sf-catalog-id"),
-    quantity: 1,
-    price: Number(el.getAttribute("data-sf-price")),
+    quantity: quantityValue,
+    price: Number(el.getAttribute("data-sf-price")) || 0, // Ini tetap diisi harga per satu malam / per unit
   };
 }
