@@ -14,10 +14,10 @@ interface BannerAttributes {
 
 const DEFAULT_BANNER: BannerAttributes = {
   BackgroundImageUrl:
-    "https://www.jsluwansa.com/wp-content/uploads/sites/76/2024/11/JS-Luwansa-Grand-Deluxe-Corner-2200x1200.jpg",
-  Header: "Feel the Comfort",
-  Subheader: "Relax and Enjoy",
-  CallToActionText: "Booking Now",
+    "https://www.jsluwansa.com/wp-content/uploads/sites/76/2026/07/Website-Landing-Page-2026-NEW.jpg",
+  Header: "Selamat Datang di JS Luwansa Hotel & Convention Center",
+  Subheader: "Kenyamanan menginap dan fasilitas MICE terbaik di kawasan Kuningan, Jakarta.",
+  CallToActionText: "Lihat Kamar",
   CallToActionUrl: "/rooms",
 };
 
@@ -35,7 +35,11 @@ export default function PersonalizedBanner() {
         const point = res?.personalizations?.find(
           (p) => p.personalizationPointName === "Homepage_Banner",
         );
-        if (point?.attributes) {
+        // Kalau attributes kosong ({}) -- artinya tidak ada Decision yang match
+        // untuk individu ini sama sekali (bukan cuma "pakai default") -- biarkan
+        // banner tetap di state sebelumnya (DEFAULT_BANNER kalau ini fetch pertama),
+        // jangan ditimpa dengan objek kosong.
+        if (point?.attributes && Object.keys(point.attributes).length > 0) {
           setBanner((prev) => ({ ...prev, ...point.attributes }));
         }
       })
