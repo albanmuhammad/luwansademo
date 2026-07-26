@@ -21,8 +21,12 @@ const DEFAULT_BANNER: BannerAttributes = {
   CallToActionUrl: "/rooms",
 };
 
+// Lama fade out/in dalam ms -- harus SAMA dengan angka di className duration-* di bawah
+const FADE_MS = 400;
+
 export default function PersonalizedBanner() {
   const [banner, setBanner] = useState<BannerAttributes>(DEFAULT_BANNER);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     fetchPersonalization<{
@@ -35,12 +39,13 @@ export default function PersonalizedBanner() {
         const point = res?.personalizations?.find(
           (p) => p.personalizationPointName === "Homepage_Banner",
         );
-        // Kalau attributes kosong ({}) -- artinya tidak ada Decision yang match
-        // untuk individu ini sama sekali (bukan cuma "pakai default") -- biarkan
-        // banner tetap di state sebelumnya (DEFAULT_BANNER kalau ini fetch pertama),
-        // jangan ditimpa dengan objek kosong.
         if (point?.attributes && Object.keys(point.attributes).length > 0) {
-          setBanner((prev) => ({ ...prev, ...point.attributes }));
+          // Crossfade: fade-out konten lama dulu, baru ganti isinya, lalu fade-in.
+          setVisible(false);
+          setTimeout(() => {
+            setBanner((prev) => ({ ...prev, ...point.attributes }));
+            setVisible(true);
+          }, FADE_MS);
         }
       })
       .catch((err) => {
@@ -53,22 +58,27 @@ export default function PersonalizedBanner() {
 
   return (
     <div className="relative w-full h-[360px] sm:h-[440px] overflow-hidden">
-      <Image
-        src={banner.BackgroundImageUrl}
-        alt={banner.Header}
-        fill
-        priority
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="relative z-10 h-full flex flex-col items-start justify-center gap-4 px-6 sm:px-16 max-w-2xl">
-        <h1 className="text-white text-3xl sm:text-4xl font-semibold leading-tight">
-          {banner.Header}
-        </h1>
-        <p className="text-white/90 text-base sm:text-lg">{banner.Subheader}</p>
-        <a href={banner.CallToActionUrl} className="rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:opacity-90">
-          {banner.CallToActionText}
-        </a>
+      <div
+        className={`absolute inset-0 transition-opacity duration-[400ms] ease-in-out ${visible ? "opacity-100" : "opacity-0"
+          }`}
+      >
+        <Image
+          src={banner.BackgroundImageUrl}
+          alt={banner.Header}
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative z-10 h-full flex flex-col items-start justify-center gap-4 px-6 sm:px-16 max-w-2xl">
+          <h1 className="text-white text-3xl sm:text-4xl font-semibold leading-tight">
+            {banner.Header}
+          </h1>
+          <p className="text-white/90 text-base sm:text-lg">{banner.Subheader}</p>
+          <a href={banner.CallToActionUrl} className="rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:opacity-90">
+            {banner.CallToActionText}
+          </a>
+        </div>
       </div>
     </div>
   );
