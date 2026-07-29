@@ -1,0 +1,79 @@
+openapi: 3.0.3
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        contact_name:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        id:
+          type: string
+        total:
+          type: number
+        shipAddress:
+          type: string
+        taxExempt:
+          type: string
+        tax_rate:
+          type: number
+        my_email:
+          type: string
+          format: email
+        my_phone:
+          type: string
+          format: phone
+        my_url:
+          type: string
+          format: url
+        my_percent:
+          type: string
+          format: percent
+        is_new:
+          type: boolean
+        modifie_date:
+          type: string
+          format: date-time
+    OrderItem:
+      type: object
+      properties:
+        cost:
+          type: number
+        createdDate:
+          type: string
+          format: date-time
+        quantity:
+          type: number
+        name:
+          type: string
+        orderId:
+          type: string
+        itemNumber:
+          type: number
+    SalesCustomer:
+      type: object
+      properties:
+        address:
+          type: string
+        age:
+          type: number
+        city:
+          type: string
+        country:
+          type: string
+        modifiedDate:
+          type: string
+          format: date-time
+        firstName:
+          type: string
+        gender:
+          type: string
+        id:
+          type: string
+        lastName:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
