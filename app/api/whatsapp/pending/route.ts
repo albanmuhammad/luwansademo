@@ -11,6 +11,8 @@ const API_KEY = process.env.WHATSAPP_API_KEY!;
  */
 export async function GET(req: Request) {
   const apiKey = req.headers.get("x-api-key");
+  console.log("Received x-api-key:", apiKey ? `${apiKey.slice(0, 4)}...` : "NULL/EMPTY");
+  console.log("Expected:", process.env.WHATSAPP_API_KEY ? "SET" : "NOT SET");
   if (apiKey !== API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
