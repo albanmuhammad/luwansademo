@@ -11,7 +11,10 @@ const API_KEY = process.env.WHATSAPP_API_KEY!;
  */
 export async function GET(req: Request) {
   const apiKey = req.headers.get("x-api-key");
-  console.log("Received x-api-key:", apiKey ? `${apiKey.slice(0, 4)}...` : "NULL/EMPTY");
+  console.log(
+    "Received x-api-key:",
+    apiKey ? `${apiKey.slice(0, 4)}...` : "NULL/EMPTY",
+  );
   console.log("Expected:", process.env.WHATSAPP_API_KEY ? "SET" : "NOT SET");
   if (apiKey !== API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,7 +26,7 @@ export async function GET(req: Request) {
         SMS_TYPE: "1",
         SMS_ID: "2607285XXJ",
         REG_NO: "CDG260000259",
-        HP: "6281233339921",
+        HP: "6281298672616",
         PATIENT_ID: "0012170600301",
         OUTLET_ID: "0040",
       },
@@ -31,7 +34,7 @@ export async function GET(req: Request) {
         SMS_TYPE: "1",
         SMS_ID: "260728LKBJ",
         REG_NO: "2511140005",
-        HP: "6281233339921",
+        HP: "6287738249181",
         PATIENT_ID: "0040230400013",
         OUTLET_ID: "0040",
       },
