@@ -27,7 +27,7 @@ export async function GET(
       REG_NO: "CDG260000259",
       IMAGE_HEADER: "https://placehold.co/600x300/FFC907/000000?text=Prodia",
       PATIENT_ID: "0012170600301",
-      TO: "6281233339921",
+      TO: "6281298672616",
       OUTLET_ID: "0040",
       TEMPLATE_ID: "1",
       PARAMETER: [
@@ -46,7 +46,7 @@ export async function GET(
       REG_NO: "2511140005",
       IMAGE_HEADER: "https://placehold.co/600x300/FFC907/000000?text=Prodia",
       PATIENT_ID: "0040230400013",
-      TO: "6281233339921",
+      TO: "6287738249181",
       OUTLET_ID: "0040",
       TEMPLATE_ID: "1",
       PARAMETER: [
