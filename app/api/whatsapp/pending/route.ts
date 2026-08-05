@@ -4,18 +4,13 @@ const API_KEY = process.env.WHATSAPP_API_KEY!;
 
 /**
  * GET /api/whatsapp/pending
- * Dipanggil Salesforce Scheduled Flow (HTTP Callout) untuk ambil daftar
+ * Dipanggil Salesforce (Apex/Flow HTTP Callout) untuk ambil daftar
  * notifikasi WhatsApp yang siap dikirim.
  *
- * DUMMY DATA — nanti diganti query ke database/sistem asli.
+ * DUMMY DATA — nanti diganti proxy ke API Axway internal (get-data).
  */
 export async function GET(req: Request) {
   const apiKey = req.headers.get("x-api-key");
-  console.log(
-    "Received x-api-key:",
-    apiKey ? `${apiKey.slice(0, 4)}...` : "NULL/EMPTY",
-  );
-  console.log("Expected:", process.env.WHATSAPP_API_KEY ? "SET" : "NOT SET");
   if (apiKey !== API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -24,6 +19,7 @@ export async function GET(req: Request) {
     LIST_DATA: [
       {
         SMS_TYPE: "1",
+        EXTERNAL_ID: "2607285XXJ-0040-0012170600301-CDG260000259-1",
         SMS_ID: "2607285XXJ",
         REG_NO: "CDG260000259",
         HP: "6281298672616",
@@ -32,6 +28,7 @@ export async function GET(req: Request) {
       },
       {
         SMS_TYPE: "1",
+        EXTERNAL_ID: "260728LKBJ-0040-0040230400013-2511140005-1",
         SMS_ID: "260728LKBJ",
         REG_NO: "2511140005",
         HP: "6287738249181",
